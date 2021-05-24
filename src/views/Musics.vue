@@ -1,14 +1,10 @@
 <template>
   <div class="container">
     <Aplayer
-      autoplay
-      :music="{
-        title: 'Summer Time',
-        artist: 'Manche',
-        src: 'http://catek.cn/musics/SUMMER_TIME.mp3',
-        pic: '',
-      }"
+      v-if="musicList.length > 0"
+      :music="musicList[0]"
       :list="musicList"
+      repeat="list"
     />
   </div>
 </template>
@@ -30,7 +26,6 @@ export default {
   mounted() {
     this.$http.get("http://catek.cn/api/musics").then((response) => {
       this.musicList = response.data;
-      console.log(this.musicList);
     });
   },
 };
