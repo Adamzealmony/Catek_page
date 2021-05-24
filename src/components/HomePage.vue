@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <h1 @click="ChangeFace()" style="font-size:200px">{{ face }}</h1>
+    <h1 @click="ChangeFace()" style="font-size:200px; margin:0px">{{ face }}</h1>
   </div>
 </template>
 
@@ -20,6 +20,9 @@ export default {
   created() {},
   mounted() {
     this.face = this.cats[this.randomNum(0, 8)];
+    setInterval(() => {
+      this.ChangeFace();
+    },1000);
   },
   methods: {
     randomNum(minNum, maxNum) {
