@@ -1,7 +1,21 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <h1 @click="ChangeFace()" style="font-size:200px; margin:0px">{{ face }}</h1>
+    <div
+      class="bg"
+      style="
+        width: 100%;
+        height: 500px;
+        position: relative;
+        background-image: url(/images/catbed.png);
+        background-repeat: no-repeat;
+        background-position: center;
+      "
+    >
+      <h1 @click="ChangeFace()" style="font-size: 200px">
+        {{ face }}
+      </h1>
+    </div>
   </div>
 </template>
 
@@ -22,7 +36,7 @@ export default {
     this.face = this.cats[this.randomNum(0, 8)];
     setInterval(() => {
       this.ChangeFace();
-    },1000);
+    }, 1000);
   },
   methods: {
     randomNum(minNum, maxNum) {
@@ -37,7 +51,7 @@ export default {
     },
     ChangeFace() {
       this.face = this.cats[this.randomNum(0, 8)];
-    }
+    },
   },
 };
 </script>
@@ -46,6 +60,9 @@ export default {
 <style scoped>
 h3 {
   margin: 40px 0 0;
+}
+h1 {
+  margin: 0 0;
 }
 ul {
   list-style-type: none;
@@ -60,5 +77,6 @@ a {
 }
 .hello {
   user-select: none;
+  width: 100%;
 }
 </style>
