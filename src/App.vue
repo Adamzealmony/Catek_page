@@ -11,6 +11,7 @@
       :music="musicList[0]"
       :list="musicList"
       repeat="list"
+      shuffle
       listFolded
     />
     </div>
