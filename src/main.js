@@ -6,11 +6,12 @@ import axios from "axios";
 import ElementUI from "element-ui";
 import "element-ui/lib/theme-chalk/index.css";
 import VueAxios from "vue-axios";
+import hevueImgPreview from 'hevue-img-preview';
 import "./assets/css/style.css";
 
 Vue.config.productionTip = false;
 Vue.use(VueAxios, axios);
-
+Vue.use(hevueImgPreview);
 Vue.use(ElementUI);
 
 new Vue({

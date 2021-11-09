@@ -8,6 +8,7 @@
         height="100%"
         stripe
         v-loading="loading"
+        @row-click="previewImg"
       >
         <el-table-column prop="author" label="食客" width="90">
         </el-table-column>
@@ -74,13 +75,14 @@
               action="http://catek.cn/api/upload"
               :class="{ disabled: isMax }"
               list-type="picture-card"
-              accept=".png,.jpg,.jpeg"
               :auto-upload="false"
+              accept=".jpg,.jpeg,.png,.gif,.bmp,.JPG,.JPEG,.PBG,.GIF,.BMP"
               :limit="1"
               :file-list="fileList"
               :on-remove="handleRemove"
               :on-success="success"
               :on-error="error"
+              :beforeUpload="beforeUpload"
               :on-change="change"
             >
               <i slot="default" class="el-icon-plus"></i>
@@ -118,6 +120,7 @@ export default {
       uploading: false,
       isMax: false,
       disabled: false,
+      notUploaded: true,
       fileList: [],
       formLabelWidth: "30",
       loading: true,
@@ -135,6 +138,65 @@ export default {
     };
   },
   methods: {
+    beforeUpload(file) {
+      let _this = this;
+      return new Promise((resolve, reject) => {
+        let isLt2M = file.size / 1024 / 1024 < 10; // 判定图片大小是否小于10MB
+        if (!isLt2M) {
+          reject();
+        }
+        let image = new Image(),
+          resultBlob = "";
+        image.src = URL.createObjectURL(file);
+        image.onload = () => {
+          // 调用方法获取blob格式，方法写在下边
+          resultBlob = _this.compressUpload(image, file);
+          resolve(resultBlob);
+        };
+        image.onerror = () => {
+          reject();
+        };
+      });
+    },
+
+    /* 图片压缩方法-canvas压缩 */
+    compressUpload(image, file) {
+      let canvas = document.createElement("canvas");
+      let ctx = canvas.getContext("2d");
+      // let initSize = image.src.length;
+      let { width } = image,
+        { height } = image;
+      canvas.width = width;
+      canvas.height = height;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(image, 0, 0, width, height);
+
+      // 进行最小压缩0.1
+      let compressData = canvas.toDataURL(file.type || "image/jpeg", 0.1);
+
+      // 压缩后调用方法进行base64转Blob，方法写在下边
+      let blobImg = this.dataURItoBlob(compressData);
+      return blobImg;
+    },
+
+    /* base64转Blob对象 */
+    dataURItoBlob(data) {
+      let byteString;
+      if (data.split(",")[0].indexOf("base64") >= 0) {
+        byteString = atob(data.split(",")[1]);
+      } else {
+        byteString = unescape(data.split(",")[1]);
+      }
+      let mimeString = data.split(",")[0].split(":")[1].split(";")[0];
+      let ia = new Uint8Array(byteString.length);
+      for (let i = 0; i < byteString.length; i += 1) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ia], { type: mimeString });
+    },
+    previewImg(row) {
+      row.url && this.$hevueImgPreview(row.url);
+    },
     handleRemove(file, fileList) {
       if (fileList.length !== 1) {
         this.isMax = false;
@@ -158,7 +220,7 @@ export default {
     success(response, file, fileList) {
       this.form.url = response.url;
       this.isMax = false;
-      this.$refs["upload"].clearFiles();
+      this.notUploaded = false;
       this.addFood();
       console.log(response, file, fileList);
       console.log("success");
@@ -204,44 +266,47 @@ export default {
       return timeFlag;
     },
     addFood() {
-      if (this.isMax) {
+      if (this.isMax && this.notUploaded) {
         this.$refs["upload"].submit();
-        return;
+      } else {
+        this.$refs["form"].validate((valid) => {
+          if (valid) {
+            this.showModal = false;
+            this.$http
+              .post("http://catek.cn/api/addFood", {
+                author: this.form.author,
+                content: this.form.content,
+                submission_date: +new Date(),
+                url: this.form.url,
+              })
+              .then(() => {
+                this.$message({
+                  type: "success",
+                  message: `进食成功! ${
+                    this.form.content.length > 15
+                      ? "纯纯胖子套餐!😅"
+                      : "纯纯瘦子套餐!🤭"
+                  }`,
+                });
+                this.loading = true;
+                this.$http.get("http://catek.cn/api/foods").then((response) => {
+                  this.tableData = response.data;
+                  this.loading = false;
+                  console.log(this.tableData);
+                  this.notUploaded = true;
+                  this.isMax = false;
+                  this.$refs["form"].resetFields();
+                  this.$refs["upload"].clearFiles();
+                  this.form = {
+                    author: "",
+                    content: "",
+                    url: "",
+                  };
+                });
+              });
+          }
+        });
       }
-      this.$refs["form"].validate((valid) => {
-        if (valid) {
-          this.showModal = false;
-          this.$http
-            .post("http://catek.cn/api/addFood", {
-              author: this.form.author,
-              content: this.form.content,
-              submission_date: +new Date(),
-              url: this.form.url,
-            })
-            .then(() => {
-              this.$message({
-                type: "success",
-                message: `进食成功! ${
-                  this.form.content.length > 15
-                    ? "纯纯胖子套餐!😅"
-                    : "纯纯瘦子套餐!🤭"
-                }`,
-              });
-              this.loading = true;
-              this.$http.get("http://catek.cn/api/foods").then((response) => {
-                this.tableData = response.data;
-                this.loading = false;
-                console.log(this.tableData);
-                this.$refs["form"].resetFields();
-                this.form = {
-                  author: "",
-                  content: "",
-                  url: "",
-                };
-              });
-            });
-        }
-      });
     },
   },
 };
