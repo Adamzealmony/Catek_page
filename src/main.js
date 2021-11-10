@@ -11,7 +11,9 @@ import "./assets/css/style.css";
 
 Vue.config.productionTip = false;
 Vue.use(VueAxios, axios);
-Vue.use(hevueImgPreview);
+Vue.use(hevueImgPreview, {
+  clickMaskCLose: true,
+});
 Vue.use(ElementUI);
 
 new Vue({
