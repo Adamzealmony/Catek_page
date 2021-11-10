@@ -6,9 +6,9 @@
         :data="tableData"
         style="width: 100%"
         height="100%"
-        stripe
         v-loading="loading"
         @row-click="previewImg"
+        :row-class-name="tableRowClassName"
       >
         <el-table-column prop="author" label="食客" width="90">
         </el-table-column>
@@ -83,7 +83,7 @@
               :class="{ disabled: isMax }"
               list-type="picture-card"
               :auto-upload="false"
-              accept=".jpg,.jpeg,.png,.gif,.bmp,.JPG,.JPEG,.PBG,.GIF,.BMP"
+              accept=".jpg,.jpeg,.png,.gif,.bmp,.JPG,.JPEG,.PNG,.GIF,.BMP"
               :limit="1"
               :file-list="fileList"
               :on-remove="handleRemove"
@@ -145,6 +145,11 @@ export default {
     };
   },
   methods: {
+    tableRowClassName({ row }) {
+      if (row.url !== "") {
+        return "highlight-row";
+      }
+    },
     beforeUpload(file) {
       let _this = this;
       return new Promise((resolve, reject) => {
@@ -324,5 +329,8 @@ export default {
 <style>
 .disabled .el-upload--picture-card {
   display: none;
+}
+.el-table .highlight-row {
+  background: #f0f9eb;
 }
 </style>
