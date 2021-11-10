@@ -5,16 +5,16 @@
       <router-link to="/about">About</router-link> |
       <router-link to="/foods">报菜名</router-link>
     </div>
-    <router-view/>
+    <router-view />
     <div id="footer">
       <Aplayer
-      v-if="musicList.length > 0"
-      :music="musicList[0]"
-      :list="musicList"
-      repeat="list"
-      shuffle
-      listFolded
-    />
+        v-if="musicList.length > 0"
+        :music="musicList[0]"
+        :list="musicList"
+        repeat="list"
+        shuffle
+        listFolded
+      />
     </div>
   </div>
 </template>
@@ -54,14 +54,14 @@ export default {
   user-select: none;
 }
 
-.aplayer >>> .aplayer-body .aplayer-info .aplayer-music{
+.aplayer >>> .aplayer-body .aplayer-info .aplayer-music {
   user-select: none;
 }
-
 </style>
 
 <style>
-html, body {
+html,
+body {
   height: 100%;
 }
 #app {
@@ -72,6 +72,10 @@ html, body {
   color: #2c3e50;
   height: 100%;
   position: relative;
+}
+
+.el-scrollbar > .el-scrollbar__bar {
+  opacity: 1 !important;
 }
 
 #nav {
@@ -86,5 +90,4 @@ html, body {
 #nav a.router-link-exact-active {
   color: #42b983;
 }
-
 </style>

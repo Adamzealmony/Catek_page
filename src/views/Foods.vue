@@ -16,7 +16,13 @@
         </el-table-column>
         <el-table-column prop="submission_date" label="进食时间">
           <template slot-scope="scope">
-            <span>{{ timeFormatter(scope.row.submission_date) }}</span>
+            <span>{{
+              timeFormatter(scope.row.submission_date).split(" ")[0]
+            }}</span>
+            <br />
+            <span>{{
+              timeFormatter(scope.row.submission_date).split(" ")[1]
+            }}</span>
           </template>
         </el-table-column>
       </el-table>
@@ -46,6 +52,7 @@
               <el-option label="抓7" value="抓7"></el-option>
               <el-option label="连轩" value="连轩"></el-option>
               <el-option label="WinJ" value="WinJ"></el-option>
+              <el-option label="😼" value="😼"></el-option>
               <el-option label="王云" value="王云"></el-option>
               <el-option label="霖霖" value="霖霖"></el-option>
               <el-option label="追羊" value="追羊"></el-option>
@@ -287,6 +294,8 @@ export default {
                       ? "纯纯胖子套餐!😅"
                       : "纯纯瘦子套餐!🤭"
                   }`,
+                  duration: 10000,
+                  showClose: true,
                 });
                 this.loading = true;
                 this.$http.get("http://catek.cn/api/foods").then((response) => {
