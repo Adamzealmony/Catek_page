@@ -10,7 +10,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
-    "element-ui": "^2.15.6",
+    "element-ui": "^2.15.9",
     "hevue-img-preview": "^5.0.1",
     "hls.js": "^1.0.4",
     "vue": "^2.6.11",
